@@ -1,0 +1,15 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(curl:*)",
+      "Bash(/home/yy/myenv/bin/pip:*)",
+      "Bash(/home/yy/myenv/bin/nanobot:*)",
+      "Bash(timeout:*)",
+      "Bash(/home/yy/myenv/bin/python3:*)",
+      "Bash(/home/yy/.nanobot/workspace/test.txt)",
+      "Bash(cat:*)"
+    ],
+    "deny": [],
+    "ask": []
+  }
+}
