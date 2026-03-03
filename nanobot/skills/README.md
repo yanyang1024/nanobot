@@ -11,7 +11,7 @@ Each skill is a directory containing a `SKILL.md` file with:
 ## How models use skills in this app
 
 1. The runtime discovers skill directories and loads each `SKILL.md` metadata (`name` + `description`).
-2. When a user request matches a skill's intent, the skill body is injected as task guidance.
+2. Runtime places a skills summary into system context; when needed, the model should read target `SKILL.md` via tools (for example `read_file`).
 3. The model follows the workflow constraints in that skill and maps steps to tool calls.
 4. Tool outputs are fed back into the conversation; the model then continues until producing final answer.
 
