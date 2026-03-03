@@ -24,10 +24,18 @@ nanobot 是一个轻量级 Agent 框架，核心能力集中在三部分：
 ### 1.2 `nanobot/skills`（技能系统）
 
 - 每个技能目录下通过 `SKILL.md` 定义：`name`、`description`、工作流约束。
-- 运行时会发现技能元信息，在用户请求匹配场景下将技能内容注入上下文。
+- 运行时默认在系统提示词中注入「技能摘要」，模型需要先调用 `read_file` 读取目标 `SKILL.md`，再按技能流程执行。
 - 仓库内置技能包括：`github`、`weather`、`summarize`、`tmux`、`memory`、`cron`、`clawhub`、`skill-creator`、`daily-md-writer`。
 
-### 1.3 `nanobot/internal_orchestrator`（内网编排服务）
+### 1.3 可观测性（trace / cron）
+
+- 工具调用与最终回答会记录到 `~/.nanobot/logs/tool_trace.jsonl`。
+- 可用 `nanobot trace -n 100` 在终端查看最近链路。
+- `nanobot dashboard` 的 `/api/v1/traces` 和页面右侧面板可查看同一份 trace。
+- Cron 作业定义保存在 `~/.nanobot/data/cron/jobs.json`，可用 `nanobot cron list` 查看。
+- Cron 执行时会打印 `Cron: executing job ...` / `Cron: job ... completed` 日志（在运行 `nanobot gateway` 这类常驻进程的终端可见）。
+
+### 1.4 `nanobot/internal_orchestrator`（内网编排服务）
 
 - 提供独立的简化工具编排层（FastAPI）。
 - 内置 3 个示例企业工具：统计查询、预测推理、仿真触发（默认 mock，可替换为真实 API）。
@@ -178,4 +186,3 @@ pytest
 ```bash
 nanobot trace -n 100
 ```
-

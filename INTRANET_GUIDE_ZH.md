@@ -76,7 +76,34 @@
 nanobot trace -n 100
 ```
 
+持续观察：
+```bash
+tail -f ~/.nanobot/logs/tool_trace.jsonl
+```
+
+说明：trace 主要记录工具调用与最终回答事件；对于“是否触发了某个 skill”，可以通过对应工具调用序列来间接确认。
+
 ---
+
+
+## 4.1 Cron 在终端的可见性
+
+- 查看任务定义与下一次执行时间：
+
+```bash
+nanobot cron list
+```
+
+- 运行中的执行日志（在 `nanobot gateway` 等常驻进程终端中）：
+  - `Cron: executing job ...`
+  - `Cron: job ... completed`
+  - `Cron: job ... failed: ...`
+
+- 手工验证某个任务：
+
+```bash
+nanobot cron run <job_id>
+```
 
 ## 4. Dashboard 可视化监管（可用于调试）
 
