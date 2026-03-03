@@ -23,6 +23,8 @@ nanobot agent
 
 适合日常对话、工具调用、技能触发。
 
+说明：技能不会在匹配后自动整段注入；系统提示默认提供技能摘要，模型通常会先调用 `read_file` 打开目标 `SKILL.md` 再执行。
+
 ## 1.3 单次调用模式
 
 ```bash
@@ -38,6 +40,14 @@ nanobot gateway
 ```
 
 适合多通道统一接入（由 channel manager 管理）。
+
+## 1.5 Web Dashboard（主 Agent）
+
+```bash
+nanobot dashboard --host 0.0.0.0 --port 8090
+```
+
+浏览器访问 `http://127.0.0.1:8090`，可进行交互调试并查看 trace。
 
 ---
 
@@ -73,7 +83,7 @@ nanobot gateway
 ## 3.2 运行机制
 
 1. 系统扫描技能目录，读取每个 `SKILL.md` 的元信息。
-2. 当用户请求与技能意图匹配时，注入技能正文作为约束指令。
+2. 运行时默认先提供技能摘要；模型需要时会先读取目标 `SKILL.md`，再按技能约束执行。
 3. 模型按技能步骤选择并调用工具。
 
 ## 3.3 内置技能建议用法
@@ -110,6 +120,48 @@ nanobot trace -n 100
 - 会话中每一步调用链路是否完整
 
 ---
+
+
+## 4.3 监控技能触发与链路
+
+当你想确认“这轮对话是否触发了 skill/工具”时，推荐按下面顺序排查：
+
+1. 终端直接看最近 trace：
+
+```bash
+nanobot trace -n 100
+```
+
+2. 或持续追踪日志文件：
+
+```bash
+tail -f ~/.nanobot/logs/tool_trace.jsonl
+```
+
+3. Web 方式查看：启动 `nanobot dashboard`，打开右侧“工具调用链路”。
+
+trace 会记录 `tool_call` 和 `final_answer` 事件，以及 `session_key`、`channel`、`chat_id` 等字段，适合定位“某次对话有没有真正触发技能里要求的工具步骤”。
+
+## 4.4 Cron 定时任务在终端能否查看
+
+可以，分两类：
+
+- **任务定义/下次执行时间**：
+
+```bash
+nanobot cron list
+```
+
+- **任务执行过程日志**（需要在运行常驻进程的终端观察，例如 `nanobot gateway`）：
+  - 会出现 `Cron: executing job ...`
+  - 成功后出现 `Cron: job ... completed`
+  - 失败后出现 `Cron: job ... failed: ...`
+
+如果只想手工触发一次验证，可用：
+
+```bash
+nanobot cron run <job_id>
+```
 
 ## 5. 推荐内网配置基线
 
